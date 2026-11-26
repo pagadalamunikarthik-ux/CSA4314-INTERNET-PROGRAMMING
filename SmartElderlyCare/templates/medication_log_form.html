@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Medication Log</title>
+</head>
+<body>
+
+    <h2>Medication Taken / Missed / Skipped Log</h2>
+
+    <form action="/medication-logs/add" method="POST">
+
+        <label>Select Elderly Person:</label><br>
+        <select name="elderly_id" required>
+            <option value="">Select Person</option>
+            {% for person in elderly_list %}
+            <option value="{{ person.elderly_id }}">
+                {{ person.full_name }}
+            </option>
+            {% endfor %}
+        </select>
+        <br><br>
+
+        <label>Select Medicine:</label><br>
+        <select id="medicine_select" name="medication_id">
+            <option value="">Select Medicine</option>
+            {% for med in medication_list %}
+            <option value="{{ med.medication_id }}"
+                    data-name="{{ med.medicine_name }}">
+                {{ med.medicine_name }} - {{ med.dosage }}
+                ({{ med.elderly_name }})
+            </option>
+            {% endfor %}
+        </select>
+        <br><br>
+
+        <label>Medicine Name:</label><br>
+        <input type="text" id="medicine_name"
+               name="medicine_name" required>
+        <br><br>
+
+        <label>Medication Status:</label><br>
+        <select name="medication_status" required>
+            <option value="">Select Status</option>
+            <option value="Taken">Taken</option>
+            <option value="Missed">Missed</option>
+            <option value="Skipped">Skipped</option>
+        </select>
+        <br><br>
+
+        <label>Notes:</label><br>
+        <textarea name="notes"></textarea>
+        <br><br>
+
+        <button type="submit">Save Medication Log</button>
+
+    </form>
+
+    <script>
+        document.getElementById("medicine_select")
+        .addEventListener("change", function() {
+            const selected = this.options[this.selectedIndex];
+            document.getElementById("medicine_name").value =
+                selected.getAttribute("data-name") || "";
+        });
+    </script>
+
+</body>
+</html>

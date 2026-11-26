@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Medication History</title>
+</head>
+<body>
+    <h2>Medication History</h2>
+
+    <a href="/medication-logs/new">Add Medication Record</a>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>Log ID</th>
+            <th>Elderly ID</th>
+            <th>Medicine Name</th>
+            <th>Status</th>
+            <th>Date and Time</th>
+            <th>Notes</th>
+        </tr>
+
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.log_id }}</td>
+            <td>{{ log.elderly_id }}</td>
+            <td>{{ log.medicine_name }}</td>
+            <td>{{ log.medication_status }}</td>
+            <td>{{ log.administered_at }}</td>
+            <td>{{ log.notes }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

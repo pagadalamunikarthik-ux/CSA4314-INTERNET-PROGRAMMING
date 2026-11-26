@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Care Visit Management</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f5f7fa;
+        }
+
+        h2 {
+            color: #263746;
+        }
+
+        a {
+            color: #1769aa;
+            text-decoration: none;
+            margin-right: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #e8f0f8;
+        }
+
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            margin: 4px 0;
+        }
+
+        input, textarea {
+            width: 95%;
+            padding: 7px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            min-height: 55px;
+        }
+
+        .auto-btn {
+            background: #198754;
+            color: white;
+        }
+
+        .checkin-btn {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .checkout-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .actions form {
+            margin: 8px 0;
+        }
+
+        .action-box {
+            min-width: 220px;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Care Visit Management</h2>
+
+    <a href="/visits/add">+ Schedule New Visit</a>
+    <a href="/">Dashboard</a>
+
+    <form method="POST"
+          action="/visits/auto-schedule"
+          style="display:inline;"
+          onsubmit="return confirm('Automatically schedule visits for tomorrow?')">
+
+        <button type="submit" class="auto-btn">
+            Auto Schedule Visits
+        </button>
+    </form>
+
+    <br><br>
+
+    {% if visit_list %}
+
+    <table>
+        <tr>
+            <th>Elderly Person</th>
+            <th>Caregiver</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Visit Details</th>
+            <th>Verification</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for visit in visit_list %}
+
+        <tr>
+            <td>{{ visit[1] }}</td>
+            <td>{{ visit[2] }}</td>
+            <td>{{ visit[3] }}</td>
+            <td>{{ visit[4] }}</td>
+
+            <td class="status">{{ visit[5] }}</td>
+
+            <td>
+                Check-in: {{ visit[6] or "Not checked in" }}<br>
+                Check-out: {{ visit[7] or "Not checked out" }}<br>
+
+                {% if visit[11] %}
+                    Duration: {{ visit[11] }} minutes
+                {% endif %}
+            </td>
+
+            <td>
+                {% if visit[8] %}
+                    <a href="/static/uploads/{{ visit[8] }}"
+                       target="_blank">View Photo</a><br>
+                {% endif %}
+
+                {% if visit[9] is not none and visit[10] is not none %}
+                    <a href="https://www.google.com/maps?q={{ visit[9] }},{{ visit[10] }}"
+                       target="_blank">View GPS Location</a>
+                {% else %}
+                    GPS not recorded
+                {% endif %}
+            </td>
+
+            <td class="actions action-box">
+
+                {% if visit[5] == 'scheduled' %}
+
+                    <a href="/visits/edit/{{ visit[0] }}">Edit Visit</a>
+
+                    <form method="POST"
+                          action="/visits/checkin/{{ visit[0] }}"
+                          enctype="multipart/form-data"
+                          class="checkin-form">
+
+                        <input type="hidden" name="latitude">
+                        <input type="hidden" name="longitude">
+
+                        <button type="button"
+                                onclick="getLocation(this)">
+                            Capture GPS
+                        </button>
+
+                        <div class="gps-status">
+                            GPS not captured
+                        </div>
+
+                        <label>Upload Visit Photo:</label>
+                        <input type="file"
+                               name="visit_photo"
+                               accept="image/png,image/jpeg,image/webp"
+                               capture="environment"
+                               required>
+
+                        <button type="submit" class="checkin-btn">
+                            Check In
+                        </button>
+                    </form>
+
+                    <form method="POST"
+                          action="/visits/delete/{{ visit[0] }}"
+                          onsubmit="return confirm('Delete this visit?')">
+
+                        <button type="submit">Delete Visit</button>
+                    </form>
+
+                {% elif visit[5] == 'in_progress' %}
+
+                    <form method="POST"
+                          action="/visits/checkout/{{ visit[0] }}"
+                          onsubmit="return confirm('Complete this visit?')">
+
+                        <label><b>Health Observations</b></label>
+                        <textarea name="health_observations"
+                                  placeholder="Enter health condition, symptoms, BP observations, etc."></textarea>
+
+                        <label><b>Medication Updates</b></label>
+                        <textarea name="medication_updates"
+                                  placeholder="Enter medicines given, dosage, missed medicines, etc."></textarea>
+
+                        <label><b>Additional Visit Notes</b></label>
+                        <textarea name="notes"
+                                  placeholder="Enter other visit details"></textarea>
+
+                        <button type="submit" class="checkout-btn">
+                            Complete Visit / Check Out
+                        </button>
+                    </form>
+
+                {% else %}
+
+                    <b>Visit Completed</b>
+
+                {% endif %}
+
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+    {% else %}
+
+        <p>No visits scheduled yet.</p>
+
+    {% endif %}
+
+
+    <script>
+        function getLocation(button) {
+            const form = button.closest("form");
+
+            if (!navigator.geolocation) {
+                alert("GPS is not supported by this browser.");
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = "Getting location...";
+
+            navigator.geolocation.getCurrentPosition(
+
+                function(position) {
+                    form.querySelector('[name="latitude"]').value =
+                        position.coords.latitude;
+
+                    form.querySelector('[name="longitude"]').value =
+                        position.coords.longitude;
+
+                    form.querySelector(".gps-status").textContent =
+                        "GPS captured successfully";
+
+                    button.textContent = "GPS Captured";
+                    alert("Location captured successfully.");
+                },
+
+                function(error) {
+                    button.disabled = false;
+                    button.textContent = "Capture GPS";
+
+                    alert(
+                        "Location permission denied or unavailable. " +
+                        "Please allow location access and try again."
+                    );
+                },
+
+                {
+                    enableHighAccuracy: true,
+                    timeout: 15000
+                }
+            );
+        }
+    </script>
+
+</body>
+</html>

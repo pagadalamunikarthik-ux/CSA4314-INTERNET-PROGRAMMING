@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Family Dashboard</title>
+    <style>
+        body { font-family: Arial; background: #f1f5f9; padding: 25px; }
+        .card { background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+<h2>Welcome, {{ session.name }}</h2>
+<p>Family Dashboard</p>
+<a href="/logout">Logout</a>
+
+<div class="card">
+    <h3>Elderly Person Details</h3>
+    <p>Name: {{ elder.full_name }}</p>
+    <p>Age: {{ elder.age }}</p>
+    <p>Medical Conditions: {{ elder.medical_conditions }}</p>
+</div>
+
+<div class="card">
+    <h3>Medications</h3>
+    {% for item in medications %}
+        <p>{{ item.medicine_name }} - {{ item.dosage }} - {{ item.schedule }}</p>
+    {% else %}
+        <p>No medication records.</p>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <h3>Medication History</h3>
+    {% for item in medication_logs %}
+        <p>{{ item.medicine_name }} - {{ item.medication_status }} - {{ item.administered_at }}</p>
+    {% else %}
+        <p>No medication history.</p>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <h3>Health Records</h3>
+    {% for item in health_records %}
+        <p>{{ item.recorded_at }} | BP: {{ item.blood_pressure }} |
+           Heart Rate: {{ item.heart_rate }} |
+           Oxygen: {{ item.oxygen_level }}</p>
+    {% else %}
+        <p>No health records.</p>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <h3>Visit Updates</h3>
+    {% for item in visits %}
+        <p>{{ item.scheduled_date }} {{ item.scheduled_time }} |
+           {{ item.caregiver_name }} | {{ item.visit_status }}</p>
+    {% else %}
+        <p>No visits found.</p>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <h3>Emergency Incidents</h3>
+    {% for item in incidents %}
+        <p>{{ item.incident_type }} | {{ item.severity }} |
+           {{ item.description }} | {{ item.incident_status }}</p>
+    {% else %}
+        <p>No emergency incidents.</p>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <h3>Notifications</h3>
+    {% for item in notifications %}
+        <p>{{ item.title }} - {{ item.message }} - {{ item.created_at }}</p>
+    {% else %}
+        <p>No notifications.</p>
+    {% endfor %}
+</div>
+
+</body>
+</html>

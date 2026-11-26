@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weekly Health Report</title>
+</head>
+<body>
+
+    <h2>Generate Weekly Health Report</h2>
+
+    <form action="/reports/weekly" method="POST">
+
+        <label>Select Elderly Person:</label><br>
+
+        <select name="elderly_id" required>
+            <option value="">-- Select Person --</option>
+
+            {% for person in elderly_list %}
+            <option value="{{ person.elderly_id }}">
+                {{ person.full_name }}
+            </option>
+            {% endfor %}
+
+        </select>
+
+        <br><br>
+
+        <button type="submit">Generate PDF Report</button>
+
+    </form>
+
+</body>
+</html>

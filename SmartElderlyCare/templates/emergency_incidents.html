@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Emergency Incidents</title>
+</head>
+<body>
+    <h2>Emergency Incident Records</h2>
+
+    <a href="/emergency-incidents/new">Report New Emergency</a>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>Incident ID</th>
+            <th>Elderly ID</th>
+            <th>Incident Type</th>
+            <th>Severity</th>
+            <th>Description</th>
+            <th>Action Taken</th>
+            <th>Status</th>
+            <th>Reported At</th>
+        </tr>
+
+        {% for incident in incidents %}
+        <tr>
+            <td>{{ incident.incident_id }}</td>
+            <td>{{ incident.elderly_id }}</td>
+            <td>{{ incident.incident_type }}</td>
+            <td>{{ incident.severity }}</td>
+            <td>{{ incident.description }}</td>
+            <td>{{ incident.action_taken }}</td>
+            <td>{{ incident.incident_status }}</td>
+            <td>{{ incident.reported_at }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

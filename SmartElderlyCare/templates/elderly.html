@@ -1,0 +1,365 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Elderly Residents | ElderlyCare</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: #f3f6fb;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #172b4d;
+}
+
+.sidebar {
+    width: 245px;
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #153448;
+    color: white;
+    padding: 28px 18px;
+}
+
+.brand {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 42px;
+}
+
+.sidebar a {
+    display: block;
+    color: #dce8ef;
+    text-decoration: none;
+    padding: 14px 13px;
+    margin: 7px 0;
+    border-radius: 9px;
+    font-size: 15px;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background: #24627c;
+    color: white;
+}
+
+.main {
+    margin-left: 245px;
+    padding: 35px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    gap: 15px;
+}
+
+.topbar h2 {
+    font-weight: 700;
+    margin: 0;
+}
+
+.subtitle {
+    color: #718096;
+    margin-top: 7px;
+}
+
+.summary {
+    background: linear-gradient(120deg, #153448, #24718a);
+    color: white;
+    padding: 25px;
+    border-radius: 16px;
+    margin-bottom: 28px;
+    box-shadow: 0 8px 24px rgba(21,52,72,.12);
+}
+
+.summary h3 {
+    font-size: 34px;
+    font-weight: 700;
+    margin: 8px 0 0;
+}
+
+.search-box {
+    background: white;
+    border: 1px solid #e5eaf1;
+    padding: 13px 17px;
+    border-radius: 11px;
+    width: 100%;
+    outline: none;
+}
+
+.search-box:focus {
+    border-color: #24718a;
+    box-shadow: 0 0 0 3px rgba(36,113,138,.1);
+}
+
+.profile-card {
+    background: white;
+    border: 1px solid #e9eef4;
+    border-radius: 15px;
+    padding: 21px;
+    height: 100%;
+    transition: .2s;
+    box-shadow: 0 5px 18px rgba(20,45,70,.04);
+}
+
+.profile-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(20,45,70,.10);
+}
+
+.avatar {
+    width: 55px;
+    height: 55px;
+    border-radius: 14px;
+    background: #e5f1f6;
+    color: #1b647d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+}
+
+.profile-name {
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.profile-info {
+    color: #718096;
+    font-size: 13px;
+    margin: 7px 0;
+}
+
+.health-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 9px;
+    background: #e5f7ed;
+    color: #18834b;
+}
+
+.health-badge.has-condition {
+    background: #fff1df;
+    color: #b76b13;
+}
+
+.card-actions {
+    display: flex;
+    gap: 7px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+}
+
+.card-actions a,
+.card-actions button {
+    font-size: 12px;
+    border-radius: 7px;
+}
+
+.empty {
+    background: white;
+    padding: 45px;
+    border-radius: 14px;
+    text-align: center;
+    color: #718096;
+}
+
+@media(max-width: 850px) {
+    .sidebar {
+        position: relative;
+        width: 100%;
+        min-height: auto;
+    }
+    .main {
+        margin-left: 0;
+        padding: 20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<aside class="sidebar">
+    <div class="brand">💙 ElderlyCare</div>
+
+    <a href="/">🏠 Dashboard</a>
+    <a href="/elderly" class="active">👴 Elderly Profiles</a>
+    <a href="/caregivers">👩‍⚕️ Caregivers</a>
+    <a href="/medications">💊 Medications</a>
+    <a href="/health">❤️ Health Monitoring</a>
+    <a href="/visits">🗓️ Visit Scheduling</a>
+    <a href="/notifications">🔔 Notifications</a>
+</aside>
+
+<main class="main">
+
+    <div class="topbar">
+        <div>
+            <h2>Elderly Residents</h2>
+            <p class="subtitle">Manage and monitor all registered residents.</p>
+        </div>
+
+        <a href="/elderly/add" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Add Resident
+        </a>
+    </div>
+
+    <div class="summary">
+        <div><i class="bi bi-people-fill"></i> Total Registered Residents</div>
+        <h3>{{ elderly_list|length }}</h3>
+        <small>Resident directory</small>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <input type="text" id="searchInput"
+                   class="search-box"
+                   placeholder="🔍 Search residents by name...">
+        </div>
+        <div class="col-md-4 mt-2 mt-md-0">
+            <div class="text-muted pt-2">
+                Showing <strong id="visibleCount">{{ elderly_list|length }}</strong> residents
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4" id="profileGrid">
+
+        {% for person in elderly_list %}
+
+        <div class="col-xl-4 col-lg-6 col-md-6 resident-item"
+             data-name="{{ person[1]|lower }}">
+
+            <div class="profile-card">
+
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <span class="badge bg-light text-secondary">
+                        ID #{{ person[0] }}
+                    </span>
+                </div>
+
+                <div class="profile-name">{{ person[1] }}</div>
+
+                <div class="profile-info">
+                    <i class="bi bi-person"></i>
+                    {{ person[2] or 'Age not provided' }}
+                    {% if person[2] %} years{% endif %}
+                    &nbsp; | &nbsp; {{ person[3] or 'Gender not provided' }}
+                </div>
+
+                <div class="profile-info">
+                    <i class="bi bi-geo-alt"></i>
+                    {{ person[4] or 'Address not provided' }}
+                </div>
+
+                {% if person[5] %}
+                    <span class="health-badge has-condition">
+                        <i class="bi bi-heart-pulse"></i>
+                        {{ person[5] }}
+                    </span>
+                {% else %}
+                    <span class="health-badge">
+                        <i class="bi bi-check-circle"></i>
+                        No known health issues
+                    </span>
+                {% endif %}
+
+                <div class="card-actions">
+
+                    <a href="/elderly/view/{{ person[0] }}"
+                       class="btn btn-primary btn-sm">
+                        <i class="bi bi-eye"></i> View Full Profile
+                    </a>
+
+                    <a href="/elderly/edit/{{ person[0] }}"
+                       class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+
+                    <form action="/elderly/delete/{{ person[0] }}"
+                          method="POST"
+                          onsubmit="return confirm('Are you sure you want to delete this resident?');">
+
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+
+        {% else %}
+
+        <div class="col-12">
+            <div class="empty">
+                <i class="bi bi-people" style="font-size:40px"></i>
+                <h5 class="mt-3">No residents found</h5>
+                <p>Add your first elderly resident to get started.</p>
+            </div>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <div id="noResults" class="empty mt-3" style="display:none">
+        <i class="bi bi-search" style="font-size:35px"></i>
+        <h5 class="mt-3">No matching residents</h5>
+        <p>Try searching with another name.</p>
+    </div>
+
+    <a href="/" class="btn btn-outline-secondary mt-4">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+
+</main>
+
+<script>
+const searchInput = document.getElementById("searchInput");
+const residentItems = document.querySelectorAll(".resident-item");
+const visibleCount = document.getElementById("visibleCount");
+const noResults = document.getElementById("noResults");
+
+searchInput.addEventListener("input", function() {
+    const search = this.value.toLowerCase().trim();
+    let count = 0;
+
+    residentItems.forEach(item => {
+        const name = item.dataset.name;
+        const matches = name.includes(search);
+
+        item.style.display = matches ? "" : "none";
+
+        if (matches) count++;
+    });
+
+    visibleCount.textContent = count;
+    noResults.style.display = count === 0 ? "block" : "none";
+});
+</script>
+
+</body>
+</html>

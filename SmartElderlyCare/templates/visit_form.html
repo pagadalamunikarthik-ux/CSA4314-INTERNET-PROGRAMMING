@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Schedule Care Visit</title>
+</head>
+<body>
+    <h2>{{ "Edit Visit" if visit else "Schedule New Visit" }}</h2>
+
+    <form method="POST">
+        <label>Select Elderly Person:</label><br>
+        <select name="elderly_id" required>
+            {% for person in elderly_list %}
+            <option value="{{ person[0] }}"
+                {% if visit and visit[1] == person[0] %}selected{% endif %}>
+                {{ person[1] }}
+            </option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Select Caregiver:</label><br>
+        <select name="caregiver_id" required>
+            {% for caregiver in caregiver_list %}
+            <option value="{{ caregiver[0] }}"
+                {% if visit and visit[2] == caregiver[0] %}selected{% endif %}>
+                {{ caregiver[1] }}
+            </option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Visit Date:</label><br>
+        <input type="date" name="scheduled_date"
+               value="{{ visit[3] if visit else '' }}" required><br><br>
+
+        <label>Visit Time:</label><br>
+        <input type="time" name="scheduled_time"
+               value="{{ visit[4] if visit else '' }}" required><br><br>
+
+        <label>Visit Instructions:</label><br>
+        <textarea name="notes">{{ visit[5] if visit else '' }}</textarea><br><br>
+
+        <button type="submit">Save Visit</button>
+    </form>
+
+    <p><a href="/visits">Back to Visits</a></p>
+</body>
+</html>

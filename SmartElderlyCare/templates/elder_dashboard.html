@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Elder Dashboard</title>
+    <style>
+        body { font-family: Arial; background: #f1f5f9; padding: 25px; }
+        .card { background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+    </style>
+</head>
+<body>
+
+<h2>Welcome, {{ session.name }}</h2>
+<p>Elder Dashboard</p>
+<a href="/logout">Logout</a>
+
+<div class="card">
+    <h3>My Profile</h3>
+    <p>Name: {{ elder.full_name }}</p>
+    <p>Age: {{ elder.age }}</p>
+    <p>Medical Conditions: {{ elder.medical_conditions }}</p>
+</div>
+
+<div class="card">
+    <h3>My Medications</h3>
+    {% for item in medications %}
+        <p>{{ item.medicine_name }} - {{ item.dosage }} - {{ item.schedule }}</p>
+    {% else %}
+        <p>No medications found.</p>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <h3>My Health Records</h3>
+    {% for item in health_records %}
+        <p>{{ item.recorded_at }} | BP: {{ item.blood_pressure }} |
+           Heart Rate: {{ item.heart_rate }} |
+           Oxygen: {{ item.oxygen_level }}</p>
+    {% else %}
+        <p>No health records found.</p>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <h3>Upcoming and Previous Visits</h3>
+    {% for item in visits %}
+        <p>{{ item.scheduled_date }} {{ item.scheduled_time }} |
+           {{ item.caregiver_name }} | {{ item.visit_status }}</p>
+    {% else %}
+        <p>No visits found.</p>
+    {% endfor %}
+</div>
+
+</body>
+</html>
