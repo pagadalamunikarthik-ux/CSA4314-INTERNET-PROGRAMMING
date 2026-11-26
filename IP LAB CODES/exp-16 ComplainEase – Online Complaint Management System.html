@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ComplainEase - Online Complaint Management System</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f3f6fb;color:#263445}
+header{background:#173b65;color:white;padding:18px 7%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+header h2{font-size:25px}
+nav a{color:white;text-decoration:none;margin:8px;font-weight:bold;cursor:pointer}
+.hero{background:linear-gradient(120deg,#173b65,#2878b9);color:white;text-align:center;padding:65px 20px}
+.hero h1{font-size:38px;margin-bottom:15px}
+.hero p{font-size:17px;line-height:1.6}
+.container{width:90%;max-width:1100px;margin:30px auto}
+.section{background:white;padding:25px;border-radius:12px;margin-bottom:25px;box-shadow:0 3px 12px #00000012}
+h2{color:#173b65;margin-bottom:18px}
+h3{margin-bottom:12px;color:#2878b9}
+input,select,textarea{width:100%;padding:12px;margin:8px 0 15px;border:1px solid #ccd5df;border-radius:6px;font-size:15px}
+textarea{min-height:100px;resize:vertical}
+button{background:#1769aa;color:white;border:0;padding:11px 20px;border-radius:6px;cursor:pointer;font-size:15px;margin:5px}
+button:hover{background:#104b7c}
+.danger{background:#c0392b}
+.success{background:#218838}
+.hidden{display:none}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;margin-top:20px}
+.card{background:#f5f8fc;padding:20px;border-radius:10px;border-left:4px solid #2878b9}
+.card h3{font-size:25px}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{padding:12px;border:1px solid #ddd;text-align:left}
+th{background:#173b65;color:white}
+tr:nth-child(even){background:#f5f8fc}
+.status{font-weight:bold;color:#1769aa}
+footer{background:#173b65;color:white;text-align:center;padding:20px;margin-top:40px}
+.small{color:#667788;font-size:13px}
+a{color:#1769aa}
+@media(max-width:600px){header{display:block;text-align:center}nav{margin-top:15px}.hero h1{font-size:29px}table{font-size:12px}th,td{padding:7px}}
+</style>
+</head>
+<body>
+
+<header>
+<h2>ComplainEase</h2>
+<nav>
+<a onclick="showSection('home')">Home</a>
+<a onclick="showSection('register')">Register</a>
+<a onclick="showSection('login')">Login</a>
+<a onclick="showSection('post')">Post Complaint</a>
+<a onclick="showSection('track')">Track Complaint</a>
+<a onclick="showSection('contact')">Contact</a>
+</nav>
+</header>
+
+<div class="hero" id="home">
+<h1>Welcome to ComplainEase</h1>
+<p>Your complaints matter. Register, track and resolve your complaints easily.</p>
+<br>
+<button onclick="showSection('post')">Post a Complaint</button>
+<button onclick="showSection('track')">Track Complaint</button>
+</div>
+
+<div class="container">
+
+<div class="section" id="register">
+<h2>User Registration</h2>
+<input id="regName" placeholder="Full Name">
+<input id="regEmail" type="email" placeholder="Email Address">
+<input id="regPhone" placeholder="Phone Number">
+<input id="regPass" type="password" placeholder="Create Password">
+<button onclick="registerUser()">Register</button>
+<p id="regMsg"></p>
+</div>
+
+<div class="section hidden" id="login">
+<h2>User / Officer / Admin Login</h2>
+<select id="loginRole">
+<option value="user">User</option>
+<option value="officer">Officer</option>
+<option value="admin">Admin</option>
+</select>
+<input id="loginId" placeholder="Email / Officer ID / Username">
+<input id="loginPass" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<p id="loginMsg"></p>
+<p class="small">Demo Admin: admin | Password: ADMIN123</p>
+<p class="small">Demo Officer: OFF001 | Password: OFF123</p>
+</div>
+
+<div class="section hidden" id="post">
+<h2>Post a Complaint</h2>
+<p class="small">Login as a user before submitting a complaint.</p>
+<input id="complaintTitle" placeholder="Complaint Title">
+<select id="complaintCategory">
+<option value="">Select Complaint Category</option>
+<option>Road and Transport</option>
+<option>Water Supply</option>
+<option>Electricity</option>
+<option>Public Safety</option>
+<option>Sanitation</option>
+<option>Government Services</option>
+<option>Other</option>
+</select>
+<textarea id="complaintDesc" placeholder="Describe your complaint in detail"></textarea>
+<input id="complaintLocation" placeholder="Complaint Location / Address">
+<label>Supporting Document / Image</label>
+<input type="file" id="complaintFile" accept="image/*,.pdf">
+<label>Google Maps Location Link (optional)</label>
+<input id="mapLink" placeholder="Paste Google Maps location link">
+<button onclick="submitComplaint()">Submit Complaint</button>
+<p id="postMsg"></p>
+</div>
+
+<div class="section hidden" id="track">
+<h2>Track Your Complaint</h2>
+<input id="trackId" placeholder="Enter Complaint ID">
+<button onclick="trackComplaint()">Track</button>
+<div id="trackResult"></div>
+</div>
+
+<div class="section hidden" id="history">
+<h2>My Complaint History</h2>
+<div id="historyData"></div>
+</div>
+
+<div class="section hidden" id="feedback">
+<h2>Submit Feedback</h2>
+<input id="feedbackComplaintId" placeholder="Complaint ID">
+<select id="feedbackRating">
+<option value="5">Excellent</option>
+<option value="4">Good</option>
+<option value="3">Average</option>
+<option value="2">Poor</option>
+<option value="1">Very Poor</option>
+</select>
+<textarea id="feedbackText" placeholder="Write your feedback"></textarea>
+<button onclick="submitFeedback()">Submit Feedback</button>
+<p id="feedbackMsg"></p>
+</div>
+
+<div class="section hidden" id="officerPanel">
+<h2>Officer Dashboard</h2>
+<div id="officerComplaints"></div>
+</div>
+
+<div class="section hidden" id="adminPanel">
+<h2>Administrator Dashboard</h2>
+<div class="cards">
+<div class="card"><h3 id="totalComplaints">0</h3>Total Complaints</div>
+<div class="card"><h3 id="totalUsers">0</h3>Registered Users</div>
+<div class="card"><h3 id="totalOfficers">0</h3>Officers</div>
+</div>
+
+<h3 style="margin-top:25px">Create Officer Account</h3>
+<input id="officerName" placeholder="Officer Name">
+<input id="officerId" placeholder="Officer ID">
+<input id="officerEmail" placeholder="Officer Email">
+<input id="officerPassword" placeholder="Officer Password">
+<button onclick="createOfficer()">Generate Officer Account</button>
+<p id="officerMsg"></p>
+
+<h3 style="margin-top:25px">Manage Complaints</h3>
+<div id="adminComplaints"></div>
+
+<h3 style="margin-top:25px">Manage User Accounts</h3>
+<div id="adminUsers"></div>
+
+<h3 style="margin-top:25px">Manage Officer Accounts</h3>
+<div id="adminOfficers"></div>
+
+<h3 style="margin-top:25px">Feature Visibility Settings</h3>
+<label><input type="checkbox" id="showFeedback" checked style="width:auto"> Enable Feedback Feature</label>
+<label><input type="checkbox" id="showPost" checked style="width:auto"> Enable Complaint Posting</label>
+<button onclick="saveSettings()">Save Settings</button>
+
+<h3 style="margin-top:25px">Update Website Information</h3>
+<textarea id="siteInfo" placeholder="Enter information for users"></textarea>
+<button onclick="saveSiteInfo()">Update Information</button>
+</div>
+
+<div class="section hidden" id="contact">
+<h2>Admin Contact Details</h2>
+<p><b>Email:</b> admin@complainease.com</p>
+<p><b>Phone:</b> +91 98765 43210</p>
+<p><b>Office:</b> Complaint Resolution Department</p>
+<p class="small">These are sample contact details for this demonstration website.</p>
+</div>
+
+<div class="section hidden" id="solutions">
+<h2>Common Issues and Solutions</h2>
+<input id="searchSolution" placeholder="Search common issues..." oninput="searchSolutions()">
+<div id="solutionList"></div>
+</div>
+
+</div>
+
+<footer>
+<p>© 2026 ComplainEase | Online Complaint Management System</p>
+<p>Making complaint resolution simple and transparent.</p>
+</footer>
+
+<script>
+let users=JSON.parse(localStorage.getItem("ce_users"))||[];
+let officers=JSON.parse(localStorage.getItem("ce_officers"))||[
+{id:"OFF001",name:"Demo Officer",email:"officer@demo.com",password:"OFF123"}
+];
+let complaints=JSON.parse(localStorage.getItem("ce_complaints"))||[];
+let feedbacks=JSON.parse(localStorage.getItem("ce_feedback"))||[];
+let currentUser=null;
+let currentRole=null;
+
+function saveData(){
+localStorage.setItem("ce_users",JSON.stringify(users));
+localStorage.setItem("ce_officers",JSON.stringify(officers));
+localStorage.setItem("ce_complaints",JSON.stringify(complaints));
+localStorage.setItem("ce_feedback",JSON.stringify(feedbacks));
+}
+
+function showSection(id){
+document.querySelectorAll(".section").forEach(s=>s.classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
+if(id==="history")showHistory();
+if(id==="officerPanel")showOfficerComplaints();
+if(id==="adminPanel")showAdmin();
+if(id==="solutions")searchSolutions();
+window.scrollTo(0,0);
+}
+
+function registerUser(){
+let name=regName.value.trim();
+let email=regEmail.value.trim().toLowerCase();
+let phone=regPhone.value.trim();
+let password=regPass.value;
+
+if(!name||!email||!phone||!password){regMsg.innerText="Please fill all fields.";return;}
+if(users.some(u=>u.email===email)){regMsg.innerText="Email already registered.";return;}
+
+users.push({name,email,phone,password});
+saveData();
+regMsg.innerText="Registration successful. Please login.";
+}
+
+function login(){
+let role=loginRole.value;
+let id=loginId.value.trim();
+let pass=loginPass.value;
+
+if(role==="admin"&&id==="admin"&&pass==="ADMIN123"){
+currentUser={name:"Administrator",email:"admin"};
+currentRole="admin";
+showSection("adminPanel");
+return;
+}
+
+if(role==="user"){
+let u=users.find(x=>x.email===id.toLowerCase()&&x.password===pass);
+if(u){
+currentUser=u;
+currentRole="user";
+alert("Welcome "+u.name);
+showSection("post");
+return;
+}
+}
+
+if(role==="officer"){
+let o=officers.find(x=>x.id===id&&x.password===pass);
+if(o){
+currentUser=o;
+currentRole="officer";
+showSection("officerPanel");
+return;
+}
+}
+loginMsg.innerText="Invalid login details.";
+}
+
+function submitComplaint(){
+if(currentRole!=="user"){postMsg.innerText="Please login as a user first.";return;}
+
+let title=complaintTitle.value.trim();
+let category=complaintCategory.value;
+let desc=complaintDesc.value.trim();
+let location=complaintLocation.value.trim();
+let file=complaintFile.files[0];
+let link=mapLink.value.trim();
+
+if(!title||!category||!desc||!location){
+postMsg.innerText="Please complete all required fields.";
+return;
+}
+
+let id="CE"+Date.now().toString().slice(-8);
+complaints.push({
+id,title,category,desc,location,link,
+fileName:file?file.name:"",
+user:currentUser.email,
+userName:currentUser.name,
+status:"Submitted",
+officer:"",
+proof:"",
+date:new Date().toLocaleString(),
+updates:[{status:"Submitted",date:new Date().toLocaleString()}]
+});
+saveData();
+postMsg.innerHTML="Complaint submitted successfully! Your Complaint ID is <b>"+id+"</b>";
+complaintTitle.value="";
+complaintDesc.value="";
+complaintLocation.value="";
+complaintFile.value="";
+mapLink.value="";
+}
+
+function trackComplaint(){
+let id=trackId.value.trim();
+let c=complaints.find(x=>x.id===id);
+if(!c){trackResult.innerHTML="<p>Complaint not found.</p>";return;}
+
+trackResult.innerHTML=`
+<div class="card">
+<h3>${c.title}</h3>
+<p><b>Complaint ID:</b> ${c.id}</p>
+<p><b>Category:</b> ${c.category}</p>
+<p><b>Location:</b> ${c.location}</p>
+<p><b>Status:</b> <span class="status">${c.status}</span></p>
+<p><b>Submitted:</b> ${c.date}</p>
+<p><b>Assigned Officer:</b> ${c.officer||"Not assigned"}</p>
+<p><b>Proof of Work:</b> ${c.proof||"Not uploaded"}</p>
+${c.link?`<p><a href="${safeUrl(c.link)}" target="_blank" rel="noopener">View Google Maps Location</a></p>`:""}
+<h3>Complaint Updates</h3>
+${c.updates.map(u=>`<p>${u.status} - ${u.date}</p>`).join("")}
+</div>`;
+}
+
+function showHistory(){
+if(currentRole!=="user"){historyData.innerHTML="Please login as a user.";return;}
+let mine=complaints.filter(c=>c.user===currentUser.email);
+historyData.innerHTML=mine.length?mine.map(c=>`
+<div class="card">
+<h3>${c.title}</h3>
+<p>Complaint ID: ${c.id}</p>
+<p>Status: <b>${c.status}</b></p>
+<p>Date: ${c.date}</p>
+<button onclick="trackId.value='${c.id}';showSection('track');trackComplaint()">Track</button>
+<button onclick="feedbackComplaintId.value='${c.id}';showSection('feedback')">Feedback</button>
+</div>`).join(""):"No complaints submitted yet.";
+}
+
+function submitFeedback(){
+if(currentRole!=="user"){feedbackMsg.innerText="Please login first.";return;}
+let id=feedbackComplaintId.value.trim();
+let c=complaints.find(x=>x.id===id&&x.user===currentUser.email);
+if(!c){feedbackMsg.innerText="Complaint not found in your history.";return;}
+feedbacks.push({id,rating:feedbackRating.value,message:feedbackText.value,user:currentUser.email});
+saveData();
+feedbackMsg.innerText="Feedback submitted successfully.";
+feedbackText.value="";
+}
+
+function showOfficerComplaints(){
+if(currentRole!=="officer"){officerComplaints.innerHTML="Please login as an officer.";return;}
+officerComplaints.innerHTML=complaints.length?complaints.map(c=>`
+<div class="card">
+<h3>${c.title}</h3>
+<p>ID: ${c.id}</p>
+<p>Category: ${c.category}</p>
+<p>Description: ${c.desc}</p>
+<p>Location: ${c.location}</p>
+<p>User: ${c.userName}</p>
+<p>Status: <b>${c.status}</b></p>
+${c.link?`<p><a href="${safeUrl(c.link)}" target="_blank" rel="noopener">View Map</a></p>`:""}
+<label>Update Status</label>
+<select id="status_${c.id}">
+<option>Submitted</option>
+<option>Under Review</option>
+<option>Assigned</option>
+<option>In Progress</option>
+<option>Resolved</option>
+<option>Rejected</option>
+</select>
+<label>Proof of Work / Action Taken</label>
+<textarea id="proof_${c.id}" placeholder="Enter resolution details"></textarea>
+<button onclick="updateComplaint('${c.id}')">Update Complaint</button>
+</div>`).join(""):"No complaints available.";
+}
+
+function updateComplaint(id){
+let c=complaints.find(x=>x.id===id);
+if(!c)return;
+c.status=document.getElementById("status_"+id).value;
+c.proof=document.getElementById("proof_"+id).value;
+c.officer=currentUser.name;
+c.updates.push({status:c.status,date:new Date().toLocaleString()});
+saveData();
+alert("Complaint updated successfully.");
+showOfficerComplaints();
+}
+
+function createOfficer(){
+let name=officerName.value.trim();
+let id=officerId.value.trim();
+let email=officerEmail.value.trim();
+let password=officerPassword.value.trim();
+if(!name||!id||!email||!password){officerMsg.innerText="Fill all officer details.";return;}
+if(officers.some(o=>o.id===id)){officerMsg.innerText="Officer ID already exists.";return;}
+officers.push({name,id,email,password});
+saveData();
+officerMsg.innerText="Officer account created successfully.";
+showAdmin();
+}
+
+function showAdmin(){
+if(currentRole!=="admin")return;
+totalComplaints.innerText=complaints.length;
+totalUsers.innerText=users.length;
+totalOfficers.innerText=officers.length;
+
+adminComplaints.innerHTML=complaints.length?`
+<table><tr><th>ID</th><th>Complaint</th><th>User</th><th>Status</th><th>Action</th></tr>
+${complaints.map(c=>`<tr>
+<td>${c.id}</td><td>${c.title}</td><td>${c.userName}</td><td>${c.status}</td>
+<td><button class="danger" onclick="deleteComplaint('${c.id}')">Delete</button></td>
+</tr>`).join("")}</table>`:"No complaints.";
+
+adminUsers.innerHTML=users.length?`
+<table><tr><th>Name</th><th>Email</th><th>Phone</th><th>Action</th></tr>
+${users.map(u=>`<tr><td>${u.name}</td><td>${u.email}</td><td>${u.phone}</td>
+<td><button class="danger" onclick="deleteUser('${u.email}')">Delete</button></td></tr>`).join("")}</table>`:"No users.";
+
+adminOfficers.innerHTML=officers.length?`
+<table><tr><th>Name</th><th>Officer ID</th><th>Email</th><th>Action</th></tr>
+${officers.map(o=>`<tr><td>${o.name}</td><td>${o.id}</td><td>${o.email}</td>
+<td><button class="danger" onclick="deleteOfficer('${o.id}')">Delete</button></td></tr>`).join("")}</table>`:"No officers.";
+}
+
+function deleteComplaint(id){
+if(confirm("Delete this complaint?")){
+complaints=complaints.filter(c=>c.id!==id);
+saveData();showAdmin();
+}
+}
+function deleteUser(email){
+if(confirm("Delete this user account?")){
+users=users.filter(u=>u.email!==email);
+saveData();showAdmin();
+}
+}
+function deleteOfficer(id){
+if(confirm("Delete this officer account?")){
+officers=officers.filter(o=>o.id!==id);
+saveData();showAdmin();
+}
+}
+
+function saveSettings(){
+localStorage.setItem("ce_showFeedback",showFeedback.checked);
+localStorage.setItem("ce_showPost",showPost.checked);
+alert("Feature settings saved for this browser.");
+}
+function saveSiteInfo(){
+localStorage.setItem("ce_siteInfo",siteInfo.value);
+alert("Website information updated.");
+}
+
+function searchSolutions(){
+let items=[
+["Road Damage","Report the damaged road with its location and photographs."],
+["Water Supply","Submit a complaint with your area and water supply details."],
+["Electricity Issue","Report power cuts or damaged electrical equipment."],
+["Garbage Collection","Provide the affected street or area details."],
+["Street Light Problem","Mention the street location and nearby landmark."],
+["Public Safety","Report safety-related concerns to the appropriate authority."]
+];
+let q=(searchSolution.value||"").toLowerCase();
+solutionList.innerHTML=items.filter(x=>(x[0]+" "+x[1]).toLowerCase().includes(q))
+.map(x=>`<div class="card"><h3>${x[0]}</h3><p>${x[1]}</p></div>`).join("");
+}
+
+function safeUrl(value){
+try{
+let u=new URL(value);
+return ["http:","https:"].includes(u.protocol)?u.href:"#";
+}catch(e){return "#";}
+}
+
+function loadSettings(){
+if(localStorage.getItem("ce_showFeedback")==="false")
+document.querySelector('a[onclick*="feedback"]')?.classList.add("hidden");
+if(localStorage.getItem("ce_showPost")==="false")
+document.querySelector('a[onclick*="post"]')?.classList.add("hidden");
+siteInfo.value=localStorage.getItem("ce_siteInfo")||"";
+}
+
+loadSettings();
+showSection("home");
+</script>
+</body>
+</html>
